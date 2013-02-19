@@ -1,6 +1,8 @@
 (ns macanudo
   (:import  [java.text SimpleDateFormat]
-            [java.util Date])
+            [java.util Date]
+            [java.net URL]
+            [org.htmlcleaner HtmlCleaner PrettyXmlSerializer CleanerProperties])
   (:require [clojure.xml :as xml]
             [clojure.zip :as z]
             [clojure.pprint :as p]
@@ -9,18 +11,12 @@
 (defn xml-str [s]
   (xml/parse (java.io.ByteArrayInputStream. (.getBytes s "UTF-8"))))
 
-(defn body-xml [url]
-  (let [html (slurp url)
-        body (-> html
-                 (.split "<body>")
-                 second 
-                 (.replace "</html>" "")
-                 (.replaceAll "(?<=>).*?(?>=<)" "")
-                 (.replaceAll "<input(.*?)>" "<input$1/>")
-                 (.replaceAll "<img(.*?)>" "<img$1/>")
-                 (.replaceAll "<br.*?>" "<br/>"))]
-    (xml-str(str "<body>" body))))
-
+(defn clean-html [url]
+  (let [cleaner    (HtmlCleaner.)
+        node       (.clean cleaner (URL. url))
+        serializer (PrettyXmlSerializer. (.getProperties cleaner))]
+    (.getAsString serializer node)))
+    
 (defn find-node 
   "Returns the first zipper location for which
 pred is true."
@@ -71,7 +67,8 @@ contains the image with the macanudo preview."
 
 (defn -main [target-dir & args]
   (-> humor-url
-      body-xml
+      clean-html
+      xml-str
       z/xml-zip
       (find-node macanudo?)
       z/node
