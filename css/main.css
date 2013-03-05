@@ -1,11 +1,27 @@
-﻿header {
+﻿body, h4 {
+	margin: 0px;
+	padding: 0px;
+	font-family: Verdana;
+}
+header {
 	margin: auto;
-	text-align: center;
+	float: left;
+	padding: 20px;
 }
 header img {
-	width: 200px;
-	border: 3px solid #CCC;
+	width: 300px;
+	border: 2px solid #000;
 }
 #image-list {
-	
+	float: left;
+	width: 600px;
+	padding: 20px;
+}
+#image-list h4 {
+	font-weight: normal;
+	color: #BBB;
+	text-align: right;
+	padding: 10px 0px;
+	border-top: 1px solid #DDD;
+	border-bottom: 1px solid #DDD;
 }
