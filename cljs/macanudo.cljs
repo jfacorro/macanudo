@@ -38,7 +38,8 @@
   (.log js/console msg))
 
 (defn dec-date [date n]
-  (let [x (-> date .getDate (- n))]
+  (let [date (js/Date. date)
+        x    (-> date .getDate (- n))]
     (.setDate date x)
     date))
 
@@ -48,9 +49,9 @@
     (str n)))
 
 (defn format-date [date format]
-  (let [y  (.getFullYear date)
-        m  (-> (.getMonth date) inc leading-0)
-        d  (-> (.getDate date) leading-0)
+  (let [y    (.getFullYear date)
+        m    (-> (.getMonth date) inc leading-0)
+        d    (-> (.getDate date) leading-0)
         date {:y y :m m :d d}]
     (apply str (map #(if (keyword? %) (% date) %) format))))
 
@@ -59,8 +60,9 @@
 (defn load-page [page]
   (let [image-list (get-by-id :image-list)
         start      (* current-page page-size)
+        end        (+ start page-size)
         today      (dec-date (js/Date.) start)
-        dates      (map (partial dec-date today) (repeat page-size 1))]
+        dates      (map (partial dec-date today) (range start end))]
     (doall (map #(add-comic image-list %) dates))))
   
 (defn init []
