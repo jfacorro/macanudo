@@ -6,7 +6,9 @@
   (:require [clojure.xml :as xml]
             [clojure.zip :as z]
             [clojure.pprint :as p]
-            [clojure.java.io :as io]))
+            [clojure.java.io :as io])
+  (:gen-class [:name macanudo
+               :main true]))
 
 (defn xml-str [s]
   (xml/parse (java.io.ByteArrayInputStream. (.getBytes s "UTF-8"))))
@@ -58,7 +60,10 @@ contains the image with the macanudo preview."
                       (-> parent :attrs :title (contains "Macanudo")))]
     (and img? parent-macanudo?)))
 
-(defn save-todays [path dir]
+(defn save-todays 
+  "Saves the file from path in dir with 
+the current date as the destination filename."
+  [path dir]
   (let [filename (-> (.. (SimpleDateFormat. "yyyy-MM-dd") (format (Date.)))
                      (str ".jpg"))]
     (save-to path (str dir filename))))
@@ -76,3 +81,6 @@ contains the image with the macanudo preview."
       :src
       (.replaceAll "w\\d*\\." ".")
       (save-todays target-dir)))
+
+(defn main [target-dir & args]
+  (main target-dir))
