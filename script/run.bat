@@ -9,3 +9,4 @@ git add %TARGET_DIR%\.
 git commit -m "Added commit."
 git status
 git push
+PAUSE
