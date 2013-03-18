@@ -5,6 +5,7 @@ SET TARGET_DIR=%CUR_PATH%..\log\
 ECHO Retrieving today's comic.
 java %JAVA_FLAGS% -cp %CUR_PATH%..\target\macanudo-0.1.0-SNAPSHOT-standalone.jar macanudo %TARGET_DIR%
 cd %CUR_PATH%\..
+git pull
 git add %TARGET_DIR%\.
 git commit -m "Added commit."
 git status
