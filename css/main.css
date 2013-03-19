@@ -1,4 +1,7 @@
-﻿body, h4 {
+﻿.clear {
+  clear:both;
+}
+body, h4 {
 	margin: 0px;
 	padding: 0px;
 	font-family: Verdana;
@@ -12,8 +15,14 @@ header img {
 	width: 300px;
 	border: 2px solid #000;
 }
-#image-list {
-	float: left;
+#pager .past {
+  float: left;
+}
+#pager .future {
+  float: right;
+}
+#content {
+  float: left;
 	width: 600px;
 	padding: 20px;
 }

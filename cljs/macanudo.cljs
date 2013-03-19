@@ -2,7 +2,7 @@
 
 (def current-page 0)
 (def page-size 5)
-(def comics-url "https://github.com/jfacorro/macanudo/blob/master/log/")
+(def comics-url "https://raw.github.com/jfacorro/macanudo/master/log/")
 
 (defn get-by-id [id]
   (.getElementById js/document (name id)))
@@ -10,6 +10,9 @@
 (defn set-attribute [elem [k v]]
   (.setAttribute elem (name k) v))
 
+(defn on [evt-name obj f]
+  (aset obj (str "on" (name evt-name)) f))
+  
 (defn process-child [parent child]
   (cond (map? child)
           (doseq [attr-val child] (set-attribute parent attr-val))
@@ -27,10 +30,13 @@
 (defn append [parent child]
   (.appendChild parent child))
 
+(defn remove-all-children [elem]
+  (aset elem "innerHTML" ""))
+
 (defn add-comic [parent date]
   (let [y-m-d (format-date date [:y "-" :m "-" :d])
         d-m-y (format-date date [:d "/" :m "/" :y])
-        src   (str comics-url y-m-d ".jpg?raw=true")
+        src   (str comics-url y-m-d ".jpg")
         div   [:div [:h4 d-m-y] [:img {:src src}]]]
     (append parent (create-element div))))
 
@@ -55,17 +61,27 @@
         date {:y y :m m :d d}]
     (apply str (map #(if (keyword? %) (% date) %) format))))
 
-(defn next-page [])
-
+(defn next-page []
+  (set! current-page (inc current-page))
+  (load-page current-page))
+  
+(defn prev-page []
+  (when (pos? current-page)
+    (set! current-page (dec current-page))
+    (load-page current-page)))
+  
 (defn load-page [page]
   (let [image-list (get-by-id :image-list)
         start      (* current-page page-size)
         end        (+ start page-size)
         today      (dec-date (js/Date.) start)
         dates      (map (partial dec-date today) (range start end))]
+    (remove-all-children image-list)
     (doall (map #(add-comic image-list %) dates))))
   
 (defn init []
+  (on :click (get-by-id :future) prev-page)
+  (on :click (get-by-id :past) next-page)
   (load-page current-page))
 
 (set! (.-onload js/window) init)
