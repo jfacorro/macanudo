@@ -11,7 +11,11 @@
   (.setAttribute elem (name k) v))
 
 (defn on [evt-name obj f]
-  (aset obj (str "on" (name evt-name)) f))
+  (log (name evt-name))
+  (log obj)
+  (log f)
+  (aset obj (str "on" (name evt-name)) f)
+  (log (.-onerror obj)))
   
 (defn process-child [parent child]
   (cond (map? child)
@@ -33,12 +37,18 @@
 (defn remove-all-children [elem]
   (aset elem "innerHTML" ""))
 
+(defn not-found-img [evt]
+  (aset (.-srcElement evt) "src" "img/not-found.jpg"))
+
 (defn add-comic [parent date]
   (let [y-m-d (format-date date [:y "-" :m "-" :d])
         d-m-y (format-date date [:d "/" :m "/" :y])
         src   (str comics-url y-m-d ".jpg")
-        div   [:div [:h4 d-m-y] [:img {:src src}]]]
-    (append parent (create-element div))))
+        id    (str "img" y-m-d)
+        div   [:div [:h4 d-m-y] [:img {:src src :id id}]]]
+    (append parent (create-element div))
+    ; Find the image element just added and handle the error event.
+    (on :error (get-by-id id) not-found-img)))
 
 (defn log [msg]
   (.log js/console msg))
