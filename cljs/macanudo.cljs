@@ -74,8 +74,9 @@
   (let [image-list (get-by-id :image-list)
         start      (* current-page page-size)
         end        (+ start page-size)
-        today      (dec-date (js/Date.) start)
+        today      (js/Date.)
         dates      (map (partial dec-date today) (range start end))]
+    (log (str "start: " start "- end: " end))
     (remove-all-children image-list)
     (doall (map #(add-comic image-list %) dates))))
   
