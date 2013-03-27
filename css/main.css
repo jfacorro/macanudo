@@ -27,6 +27,10 @@ header img {
 #pager .future {
   float: right;
 }
+#pager #present {
+  width: 100px;
+  margin: auto;
+}
 #content {
   float: left;
 	width: 600px;

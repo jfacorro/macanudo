@@ -11,11 +11,7 @@
   (.setAttribute elem (name k) v))
 
 (defn on [evt-name obj f]
-  (log (name evt-name))
-  (log obj)
-  (log f)
-  (aset obj (str "on" (name evt-name)) f)
-  (log (.-onerror obj)))
+  (aset obj (str "on" (name evt-name)) f))
   
 (defn process-child [parent child]
   (cond (map? child)
@@ -39,6 +35,12 @@
 
 (defn not-found-img [evt]
   (aset (.-srcElement evt) "src" "img/not-found.jpg"))
+
+(defn hide [obj]
+  (-> obj (.-style) (aset "display" "none")))
+
+(defn show [obj]
+  (-> obj (.-style) (aset "display" "block")))
 
 (defn add-comic [parent date]
   (let [y-m-d (format-date date [:y "-" :m "-" :d])
@@ -79,14 +81,25 @@
   (when (pos? current-page)
     (set! current-page (dec current-page))
     (load-page current-page)))
+
+(defn check-present [date today]
+  (if (= date today)
+    (do
+      (-> :present get-by-id show)
+      (-> :future get-by-id hide))
+    (do
+      (-> :present get-by-id hide)
+      (-> :future get-by-id show))))
   
-(defn load-page [page]
+(defn load-page
+  "Load page-size comics in the specificed page."
+  [page]
   (let [image-list (get-by-id :image-list)
         start      (* current-page page-size)
         end        (+ start page-size)
         today      (js/Date.)
         dates      (map (partial dec-date today) (range start end))]
-    (log (str "start: " start "- end: " end))
+    (check-present (first dates) today)
     (remove-all-children image-list)
     (doall (map #(add-comic image-list %) dates))))
   
