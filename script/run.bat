@@ -4,8 +4,8 @@ SET CUR_PATH=%~dp0
 SET TARGET_DIR=%CUR_PATH%..\log\
 ECHO Retrieving today's comic...
 java %JAVA_FLAGS% -cp %CUR_PATH%..\target\macanudo-0.1.0-SNAPSHOT-standalone.jar macanudo %TARGET_DIR%
-cd %CUR_PATH%\..
-ECHO Updating repository from origin...
+D:
+cd %CUR_PATH%..
 git pull
 ECHO Adding all files...
 git add %TARGET_DIR%\.
